@@ -21,27 +21,9 @@
   --font-display: 'Fraunces Variable', Georgia, serif;
   --font-text: 'Karla Variable', 'Segoe UI', system-ui, sans-serif;
   --font-script: 'Caveat', cursive;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ground: #101b18;
-    --panel: #172521;
-    --band: #14201d;
-    --ink: #e7f0ec;
-    --muted: #a3b8b1;
-    --mint-ink: #8ce2c8;
-    --sea: #6fd3b8;
-    --deep: #0b1412;
-    --deep-2: #122019;
-    --on-deep-muted: #94aca4;
-    --line: #25352f;
-    --field: #1d2d29;
-    --danger: #f08f8f;
-    --shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.5);
-  }
-}
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }

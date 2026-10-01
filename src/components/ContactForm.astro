@@ -48,7 +48,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
   <input type="hidden" name="startedAt" value="" />
 
   <!-- Cloudflare Turnstile: invisible unless Cloudflare suspects a bot. -->
-  <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-appearance="interaction-only" data-theme="auto" data-action="contact"></div>
+  <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-appearance="interaction-only" data-theme="light" data-action="contact"></div>
 
   <div class="actions">
     <button class="btn solid" type="submit">Send to Brett</button>

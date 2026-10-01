@@ -1,11 +1,12 @@
 ---
 import { site, nav } from '../data/site';
+import Logo from './Logo.astro';
 const year = new Date().getFullYear();
 ---
 <footer>
   <div class="wrap grid">
     <div>
-      <span class="script brand">Brett Lyle Coaching</span>
+      <div class="logo-tile"><Logo width={190} /></div>
       <p class="tag">Craft your brand. Set your goal. Tell your story.</p>
       <div class="socials">
         {site.socials.map((s) => <a href={s.href} rel="me noopener" target="_blank">{s.label}</a>)}
@@ -22,7 +23,8 @@ const year = new Date().getFullYear();
 <style>
   footer { background: var(--deep); color: var(--on-deep-muted); padding: 48px 0 30px; font-size: 0.9rem; }
   .grid { display: flex; justify-content: space-between; gap: 28px; flex-wrap: wrap; }
-  .brand { font-size: 1.6rem; color: var(--mint); }
+  /* Her logo is designed for light backgrounds, so it sits on a light tile here. */
+  .logo-tile { display: inline-block; background: #fff; border-radius: 8px; padding: 10px 14px; }
   .tag { margin: 0.2rem 0 0.8rem; }
   a { color: var(--on-deep); text-decoration: none; }
   a:hover { color: var(--mint); }
