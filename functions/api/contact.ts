@@ -9,11 +9,14 @@
  */
 import { buildFormalooPayload, looksLikeSpam, validateContact, type FormalooField } from '../../src/lib/contact';
 import { helpTopics } from '../../src/data/site';
+import { verifyTurnstile } from '../../src/lib/turnstile';
 
 interface Env {
   FORMALOO_API_KEY: string;
   FORMALOO_SECRET_KEY: string;
   FORMALOO_FORM_SLUG: string;
+  /** Optional until Turnstile is set up; once set, every submission must pass. */
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 const API = 'https://api.formaloo.me/v3.0';
@@ -72,6 +75,16 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   // Quietly "succeed" for bots so they don't retry.
   if (looksLikeSpam(raw)) return reply(200, { ok: true });
+
+  if (env.TURNSTILE_SECRET_KEY) {
+    const check = await verifyTurnstile(raw['cf-turnstile-response'], env.TURNSTILE_SECRET_KEY, request.headers.get('CF-Connecting-IP'));
+    if (!check.success) {
+      console.warn('[contact] turnstile rejected', check['error-codes']);
+      return reply(403, { ok: false, error: 'We couldn’t confirm you’re human. Please refresh the page and try again.' });
+    }
+  } else {
+    console.warn('[contact] TURNSTILE_SECRET_KEY not set; bot check skipped');
+  }
 
   const result = validateContact(raw, helpTopics);
   if (!result.ok) return reply(422, { ok: false, errors: result.errors });

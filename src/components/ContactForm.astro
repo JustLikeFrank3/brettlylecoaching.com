@@ -1,6 +1,9 @@
 ---
 import { helpTopics, site } from '../data/site';
 
+// Public by design. Cloudflare's always-pass test key keeps local dev working.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+
 ---
 <form class="contact" method="post" action="/api/contact" novalidate data-contact data-email={site.email}>
   <div class="row two">
@@ -44,6 +47,9 @@ import { helpTopics, site } from '../data/site';
   <label class="hp" aria-hidden="true">Company<input name="company" tabindex="-1" autocomplete="off" /></label>
   <input type="hidden" name="startedAt" value="" />
 
+  <!-- Cloudflare Turnstile: invisible unless Cloudflare suspects a bot. -->
+  <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-appearance="interaction-only" data-theme="auto" data-action="contact"></div>
+
   <div class="actions">
     <button class="btn solid" type="submit">Send to Brett</button>
     <p class="note">Brett replies personally, usually within two business days.</p>
@@ -56,6 +62,8 @@ import { helpTopics, site } from '../data/site';
   <h2>Your note is on its way.</h2>
   <p class="muted">Brett will be in touch soon to find a time to talk. In the meantime, the <a href="/podcast">Emergent Leadership podcast</a> is a good place to get to know her.</p>
 </div>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-contact]');
@@ -104,6 +112,8 @@ import { helpTopics, site } from '../data/site';
           sent.scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
         }
+        // Turnstile tokens are single-use; get a fresh one for the retry.
+        (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
         if (json.errors) showErrors(json.errors);
         status.textContent = json.error ?? (json.errors ? 'Please check the highlighted fields.' : 'Something went wrong. Please try again.');
       } catch {
@@ -158,6 +168,7 @@ import { helpTopics, site } from '../data/site';
   .chip input:checked + span::before { background: var(--mint-ink); border-color: var(--mint-ink); box-shadow: inset 0 0 0 2px var(--panel); }
   .chip input:focus-visible + span { outline: 3px solid var(--mint); outline-offset: 2px; }
 
+  .cf-turnstile:empty { display: none; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
   .actions { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.3rem; }
